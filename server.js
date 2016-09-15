@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 var portNum = keys.connections.port;
 var ticketController = require('./controllers/TicketController.js');
 
-var mongooseUri = key.connections.mongoose;
+var mongooseUri = keys.connections.mongoose;
 mongoose.connect(mongooseUri);
 
 var db = mongoose.connection;
