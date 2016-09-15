@@ -1,0 +1,22 @@
+{
+  "name": "zendesk-study",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cors": "^2.7.1",
+    "express": "^4.14.0",
+    "fs": "0.0.1-security",
+    "jsonexport": "^1.1.0",
+    "mongoose": "^4.5.9",
+    "node-zendesk": "^1.1.10",
+    "zendesk-node-api": "^1.0.3"
+  }
+}
