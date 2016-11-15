@@ -23,12 +23,12 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
   console.log('Mongoose uri:', mongooseUri);
-  // ticketController.getTickets();
-  ticketController.displayTickets();
-  // ticketController.saveTickets();
 });
-
 
 app.listen(portNum, function () {
     console.log('Listening on port: ' + portNum);
 });
+
+app.get('/api/get-bulk-tickets', ticketController.getBulk);
+app.get('/api/get-tickets-from-ids', ticketController.getTicketsFromIds);
+app.get('/api/display-tickets', ticketController.displayTickets);

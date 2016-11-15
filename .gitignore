@@ -3,3 +3,7 @@ npm-debug.log
 .DS_Store
 keys.js
 tickets.js
+beta_tickets_parsed.json
+ticket_dates.json
+sep_data.json
+controllers/Sep_tickets.json

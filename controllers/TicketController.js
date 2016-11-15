@@ -2,7 +2,7 @@ var exports         = module.exports = {},
     fs              = require('fs'),
     Ticket          = require('../models/TicketModel.js'),
     keys            = require('../keys.js'),
-    TicketIds       = require('./tickets.js').tickets,
+    TicketIds       = require('./Sep_tickets.json'),
     Zendesk         = require('zendesk-node-api');
 
 
@@ -12,12 +12,14 @@ var zendesk = new Zendesk({
   token: keys.zendesk.token
 });
 
-exports.getTickets = function () {
-  // return console.log(keys.zendesk.url);
-  zendesk.tickets.list('subject:Exiting*')
+
+// GET TICKETS MIGHT NOT WORK IF THERE IS A LARGE AMOUNT OF TICKETS
+// SEE exports.saveTickets()
+exports.getBulk = function () {
+  zendesk.tickets.list('created>2016-09-01&subject:Exiting*')
   .then(function(response) {
 
-    return console.log('Please remove the "return" to enable this function.');
+    console.log(response.length);
 
     var promises = response.map(function (ticket) {
       var newTicket = new Ticket(ticket);
@@ -37,7 +39,9 @@ exports.getTickets = function () {
   });
 };
 
-exports.saveTickets = function () {
+
+// THIS IS THE PREFERRED FUNCTION TO RETRIEVE TICKETS
+exports.getTicketsFromIds = function () {
   var lowEnd      = -100,
       highEnd     = 0,
       incrementBy = 100,
@@ -54,8 +58,8 @@ exports.saveTickets = function () {
 
     var ticketChunk = TicketIds.slice(lowEnd, highEnd);
 
-    ticketChunk.forEach(function (ticketId) {
-      zendesk.tickets.show(ticketId)
+    ticketChunk.forEach(function (ticket) {
+      zendesk.tickets.show(ticket.ID)
         .then(function(result) {
           var newTicket = new Ticket(result);
           newTicket.save();
@@ -71,5 +75,28 @@ exports.displayTickets = function () {
   Ticket.find({}, function (err, result) {
     if (err) return console.log('err: ', err);
     console.log('result: ', result.length);
+
+    var oldestDate = new Date('09/01/2016');
+    result.filter(function (ticket) {
+      if (new Date(ticket.created_at) <= oldestDate) return false;
+      return true;
+    });
+
+    result = result.map(function (ticket) {
+      return {
+        created_at  : new Date(ticket.created_at).toLocaleDateString(),
+        _id         : ticket._id,
+        zendeskId   : ticket.id,
+        description : ticket.description
+      };
+    });
+
+    var dataToSave = JSON.stringify(result);
+
+    // CREATE FILE
+    fs.writeFile('sep_data.json', dataToSave, function(err) {
+      if (err) return console.log("ERROR TWO", err);
+      console.log('file saved');
+    });
   })
 };
